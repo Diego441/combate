@@ -1,39 +1,41 @@
-# rutas.py
+import random
 
-# Define funciones relacionadas con las rutas del juego
-from app import jugador
+class Mapa:
+    def __init__(self, max_fases=10):
+        num_fases = random.randint(5, max_fases)  # Número aleatorio de fases, con un máximo definido
+        self.mapa_combates = {'Fase 1': ['Combate A']}  # Fase 1 siempre tiene un solo combate
+        self.fase_actual = 'Fase 1'
 
-# Estructura inicial del mapa de combates
-mapa_combates = {
-    'Fase 1': ['Combate A'],
-    'Fase 2': ['Combate A', 'Combate B'],
-    'Fase 3': ['Combate A', 'Combate B'],
-    # ... y así sucesivamente hasta la fase que desees
-}
+        # Generar fases adicionales
+        for i in range(2, num_fases + 1):
+            self.mapa_combates[f'Fase {i}'] = ['Combate A', 'Combate B']  # Cada fase tiene dos combates
 
-# Registro de las fases completadas y los combates desbloqueados
-fases_completadas = []
-combates_desbloqueados = ['Fase 1']  # Inicialmente solo la Fase 1 está disponible
+        self.fases_completadas = []
+        self.combates_desbloqueados = ['Fase 1']
 
-# Función para obtener el estado actual de los combates
-def obtener_mapa_combates():
-    estado_combates = {}
-    for fase, combates in mapa_combates.items():
-        estado_combates[fase] = {
-            'combates': combates,
-            'disponible': fase in combates_desbloqueados
-        }
-    return estado_combates
+    def obtener_estado_combates(self):
+        estado_combates = {}
+        for fase, combates in self.mapa_combates.items():
+            estado_combates[fase] = {
+                'combates': combates,
+                'disponible': fase in self.combates_desbloqueados
+            }
+        return estado_combates
 
-# Función para actualizar el mapa de combates después de una victoria
-def desbloquear_siguiente_fase(fase_actual):
-    # Marcar la fase actual como completada
-    fases_completadas.append(fase_actual)
-    
-    # Desbloquear la siguiente fase
-    indice_fase_actual = list(mapa_combates.keys()).index(fase_actual)
-    if indice_fase_actual + 1 < len(mapa_combates):
-        fase_siguiente = list(mapa_combates.keys())[indice_fase_actual + 1]
-        combates_desbloqueados.append(fase_siguiente)
+    def desbloquear_siguiente_fase(self, fase_actual):
+        self.fases_completadas.append(fase_actual)
+        indice_fase_actual = list(self.mapa_combates.keys()).index(fase_actual)
+
+        # Bloquear todas las fases, incluida la actual
+        self.combates_desbloqueados = []
+
+        # Desbloquear únicamente la siguiente fase
+        if indice_fase_actual + 1 < len(self.mapa_combates):
+            fase_siguiente = list(self.mapa_combates.keys())[indice_fase_actual + 1]
+            self.combates_desbloqueados.append(fase_siguiente)
+            self.fase_actual = fase_siguiente
+
+
+
 
 
