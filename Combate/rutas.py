@@ -1,25 +1,39 @@
 # rutas.py
 
 # Define funciones relacionadas con las rutas del juego
-from app import app, jugador
-import random  # Importa random para la generación de enemigos aleatorios
+from app import jugador
 
-# Define el mapa de rutas
-mapa = {
-    1: ["Combate 1"],
-    2: ["Combate 2", "Combate 3"],
-    3: ["Combate 4", "Combate 5"],
-    # Agrega más niveles y combates aquí
+# Estructura inicial del mapa de combates
+mapa_combates = {
+    'Fase 1': ['Combate A'],
+    'Fase 2': ['Combate A', 'Combate B'],
+    'Fase 3': ['Combate A', 'Combate B'],
+    # ... y así sucesivamente hasta la fase que desees
 }
 
-# Función para avanzar al siguiente nivel al ganar un combate
-def avanzar_nivel():
-    nivel_actual = jugador.nivel
-    if nivel_actual in mapa:
-        rutas_nivel_actual = mapa[nivel_actual]
-        # Agregar las nuevas rutas al jugador
-        jugador.rutas_desbloqueadas.extend(rutas_nivel_actual)
-        # Avanzar al siguiente nivel
-        jugador.nivel += 1
+# Registro de las fases completadas y los combates desbloqueados
+fases_completadas = []
+combates_desbloqueados = ['Fase 1']  # Inicialmente solo la Fase 1 está disponible
+
+# Función para obtener el estado actual de los combates
+def obtener_mapa_combates():
+    estado_combates = {}
+    for fase, combates in mapa_combates.items():
+        estado_combates[fase] = {
+            'combates': combates,
+            'disponible': fase in combates_desbloqueados
+        }
+    return estado_combates
+
+# Función para actualizar el mapa de combates después de una victoria
+def desbloquear_siguiente_fase(fase_actual):
+    # Marcar la fase actual como completada
+    fases_completadas.append(fase_actual)
+    
+    # Desbloquear la siguiente fase
+    indice_fase_actual = list(mapa_combates.keys()).index(fase_actual)
+    if indice_fase_actual + 1 < len(mapa_combates):
+        fase_siguiente = list(mapa_combates.keys())[indice_fase_actual + 1]
+        combates_desbloqueados.append(fase_siguiente)
 
 
